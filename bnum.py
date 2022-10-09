@@ -46,6 +46,11 @@ def unbounded(x: Union[bnum, float, int]) -> float:
         return x
 
 
+def blend(x: bnum, y: bnum, weight: bnum) -> bnum:
+    weighting_factor = 1 - ((1.0 - unbounded(weight)) / 2.0)
+    return bind(unbounded(y) * weighting_factor + unbounded(x) * (1 - weighting_factor))
+
+
 class bnum:
     """bnum(x) -> bounded floating point number
 
@@ -80,12 +85,22 @@ class bnum:
     def __init__(self, value: float):
         self.value = self._check_range(value)
 
-    def __add__(self, y: float) -> bnum:
+    def __str__(self):
+        """x.__str__() <==> str(x)"""
+        return str(self.value)
+
+    def __repr__(self):
+        return f"bnum({self.value})"
+
+    def blend(self, y, weight):
+        return blend(self, y, weight)
+
+    def __add__(self, y: Union[float, int, bnum]) -> bnum:
         """x.__add__(y) <==> x+y"""
         y_ub = unbounded(y)
         return bind(self.unbounded + y_ub)
 
-    def __truediv__(self, y: float) -> bnum:
+    def __truediv__(self, y: Union[float, int, bnum]) -> bnum:
         """x.__div__(y) <==> x/y"""
         y_ub = unbounded(y)
         return bind(self.unbounded / y_ub)
@@ -94,24 +109,17 @@ class bnum:
         """x.__float__() <==> float(x)"""
         return float(self.value)
 
-    def __mul__(self, y: float) -> bnum:
+    def __mul__(self, y: Union[float, int, bnum]) -> bnum:
         """x.__mul__(y) <==> x*y"""
         y_ub = unbounded(y)
         return bind(self.unbounded * y_ub)
 
-    def __pow__(self, y: float, mod: Optional[float] = None) -> bnum:
+    def __pow__(self, y: Union[float, int, bnum], mod: Optional[float] = None) -> bnum:
         """x.__pow__(y[, z]) <==> pow(x, y[, z])"""
         y_ub = unbounded(y)
         return bind(pow(self.unbounded, y_ub, mod))
 
-    def __str__(self):
-        """x.__str__() <==> str(x)"""
-        return str(self.value)
-
-    def __repr__(self):
-        return f"bnum({self.value})"
-
-    def __sub__(self, y: float):
+    def __sub__(self, y: Union[float, int, bnum]):
         """x.__sub__(y) <==> x-y"""
         y_ub = unbounded(y)
         return bind(self.unbounded - y_ub)
@@ -161,7 +169,5 @@ class bnum:
         else:
             raise TypeError("Can't compare bounded number with unbounded number.")
 
-
-b = bnum
 
 b = bnum

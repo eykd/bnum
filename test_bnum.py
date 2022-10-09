@@ -171,3 +171,9 @@ def test_it_should_exponent_an_unbounded_number():
     result = b(0.6) ** b(0.25).unbounded
     expected = b(0.5337374181795533)
     assert result == expected
+
+
+def test_it_should_blend():
+    result = b(0.5).blend(b(0.75), b(0.0))
+    expected = b(0.6666666666666667)
+    assert result == expected
