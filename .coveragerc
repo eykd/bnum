@@ -1,0 +1,7 @@
+[run]
+branch = True
+source = bnum.py
+
+[report]
+show_missing = True
+skip_covered = True

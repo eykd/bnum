@@ -5,12 +5,6 @@ from __future__ import annotations
 from typing import Optional, Union
 
 
-def _check_range(x: float) -> None:
-    if x <= -1.0 or x >= 1.0:
-        raise ValueError(f"Invalid value {x!r} for bnum")
-    return x
-
-
 def _bind(unbounded_number: Union[float, int]) -> float:
     """Transform an unbounded number into an bounded number."""
     if unbounded_number > 0.0:
@@ -27,7 +21,7 @@ def _unbind(bounded_number: float) -> float:
         return 1.0 - (1.0 / (1.0 + bounded_number))
 
 
-def bind(x) -> float:
+def bind(x) -> bnum:
     """Bind an unbounded number to a bnum value between -1 and 1.
 
     Note that in the world of bounded numbers, from ten on up, the
@@ -43,6 +37,13 @@ def bind(x) -> float:
     the round-trip deviation.
     """
     return bnum(_bind(float(x)))
+
+
+def unbounded(x: Union[bnum, float, int]) -> float:
+    if isinstance(x, bnum):
+        return x.unbounded
+    else:
+        return x
 
 
 class bnum:
@@ -66,18 +67,28 @@ class bnum:
         """
         return _unbind(self.value)
 
+    @classmethod
+    def _check_range(cls, x: float) -> None:
+        if isinstance(x, cls):
+            return x.value
+
+        if x <= -1.0 or x >= 1.0:
+            raise ValueError(f"Invalid value {x!r} for bnum")
+
+        return x
+
     def __init__(self, value: float):
-        self.value = _check_range(float(value))
+        self.value = self._check_range(value)
 
     def __add__(self, y: float) -> bnum:
         """x.__add__(y) <==> x+y"""
-        y_ub = _unbind(_check_range(y))
-        return bnum(_bind(self.unbounded + y_ub))
+        y_ub = unbounded(y)
+        return bind(self.unbounded + y_ub)
 
-    def __div__(self, y: float) -> bnum:
+    def __truediv__(self, y: float) -> bnum:
         """x.__div__(y) <==> x/y"""
-        y_ub = _unbind(_check_range(y))
-        return bnum(_bind(self.unbounded / y_ub))
+        y_ub = unbounded(y)
+        return bind(self.unbounded / y_ub)
 
     def __float__(self) -> float:
         """x.__float__() <==> float(x)"""
@@ -85,13 +96,13 @@ class bnum:
 
     def __mul__(self, y: float) -> bnum:
         """x.__mul__(y) <==> x*y"""
-        y_ub = _unbind(_check_range(y))
-        return bnum(_bind(self.undbounded * y_ub))
+        y_ub = unbounded(y)
+        return bind(self.unbounded * y_ub)
 
     def __pow__(self, y: float, mod: Optional[float] = None) -> bnum:
         """x.__pow__(y[, z]) <==> pow(x, y[, z])"""
-        y_ub = _unbind(_check_range(y))
-        return bnum(_bind(pow(self.undbounded, y_ub, mod)))
+        y_ub = unbounded(y)
+        return bind(pow(self.unbounded, y_ub, mod))
 
     def __str__(self):
         """x.__str__() <==> str(x)"""
@@ -102,11 +113,11 @@ class bnum:
 
     def __sub__(self, y: float):
         """x.__sub__(y) <==> x-y"""
-        y_ub = _unbind(_check_range(y))
-        return bnum(_bind(self.unbounded - y_ub))
+        y_ub = unbounded(y)
+        return bind(self.unbounded - y_ub)
 
     def __reduce__(self):
-        return (bnum, (float(self.value),))
+        return (bnum, (self.value,))
 
     def __eq__(self, y):
         """x == y"""
