@@ -1,7 +1,7 @@
-# -*- coding: utf-8 -*-
 """bnum -- bounded numbers
 """
-from dataclasses import dataclass
+from __future__ import annotations
+
 from typing import Optional, Union
 
 
@@ -74,20 +74,10 @@ class bnum:
         y_ub = _unbind(_check_range(y))
         return bnum(_bind(self.unbounded + y_ub))
 
-    def __coerce__(self, y: float) -> tuple:
-        """x.__coerce__(y) <==> coerce(x, y)"""
-        if y >= 1.0 or y <= -1.0 or x >= 1.0 or x <= -1.0:
-            return (float(self), float(y))
-        else:
-            return (self, bnum(y))
-
     def __div__(self, y: float) -> bnum:
         """x.__div__(y) <==> x/y"""
         y_ub = _unbind(_check_range(y))
         return bnum(_bind(self.unbounded / y_ub))
-
-    def __cmp__(self, y: float) -> int:
-        return cmp(self.value, y)
 
     def __float__(self) -> float:
         """x.__float__() <==> float(x)"""
@@ -107,6 +97,9 @@ class bnum:
         """x.__str__() <==> str(x)"""
         return str(self.value)
 
+    def __repr__(self):
+        return f"bnum({self.value})"
+
     def __sub__(self, y: float):
         """x.__sub__(y) <==> x-y"""
         y_ub = _unbind(_check_range(y))
@@ -115,5 +108,49 @@ class bnum:
     def __reduce__(self):
         return (bnum, (float(self.value),))
 
+    def __eq__(self, y):
+        """x == y"""
+        if isinstance(y, bnum):
+            return self.value == y.value
+        else:
+            raise TypeError("Can't compare bounded number with unbounded number.")
+
+    def __ne__(self, y):
+        """x != y"""
+        if isinstance(y, bnum):
+            return self.value != y.value
+        else:
+            raise TypeError("Can't compare bounded number with unbounded number.")
+
+    def __ge__(self, y):
+        """x >= y"""
+        if isinstance(y, bnum):
+            return self.value >= y.value
+        else:
+            raise TypeError("Can't compare bounded number with unbounded number.")
+
+    def __gt__(self, y):
+        """x > y"""
+        if isinstance(y, bnum):
+            return self.value > y.value
+        else:
+            raise TypeError("Can't compare bounded number with unbounded number.")
+
+    def __le__(self, y):
+        """x <= y"""
+        if isinstance(y, bnum):
+            return self.value <= y.value
+        else:
+            raise TypeError("Can't compare bounded number with unbounded number.")
+
+    def __lt__(self, y):
+        """x < y"""
+        if isinstance(y, bnum):
+            return self.value < y.value
+        else:
+            raise TypeError("Can't compare bounded number with unbounded number.")
+
+
+b = bnum
 
 b = bnum
