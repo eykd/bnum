@@ -177,3 +177,40 @@ def test_it_should_blend():
     result = b(0.5).blend(b(0.75), b(0.0))
     expected = b(0.6666666666666667)
     assert result == expected
+
+
+@pytest.mark.parametrize(
+    "x,expected", [(0.1, 0.3571428571428572), (-0.1, -0.3571428571428572)]
+)
+def test_it_should_amplify(x, expected):
+    result = b(x).amplify()
+    expected = b(expected)
+    assert result == expected
+
+
+@pytest.mark.parametrize(
+    "x,weight,expected", [(0.1, 0.5, 0.4375), (-0.1, 0.5, -0.4375)]
+)
+def test_it_should_amplify_with_weight(x, weight, expected):
+    result = b(x).amplify(weight)
+    expected = b(expected)
+    assert result == expected
+
+
+@pytest.mark.parametrize(
+    "x,expected", [(0.1, 0.052631578947368474), (-0.1, -0.052631578947368474)]
+)
+def test_it_should_suppress(x, expected):
+    result = b(x).suppress()
+    expected = b(expected)
+    assert result == expected
+
+
+@pytest.mark.parametrize(
+    "x,weight,expected",
+    [(0.1, 0.5, 0.027027027027026973), (-0.1, 0.5, -0.027027027027026973)],
+)
+def test_it_should_suppress_with_weight(x, weight, expected):
+    result = b(x).suppress(weight)
+    expected = b(expected)
+    assert result == expected
