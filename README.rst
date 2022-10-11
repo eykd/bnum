@@ -43,6 +43,14 @@ Note also that the journey from unbounded to bounded will result in
 rounding errors.  The larger the unbounded number, the larger the
 round-trip deviation.
 
+Instantiating
+-------------
+
+Use the ``bnum(x)`` constructor (or its alias, ``b(x)``) to make a
+bounded number from a float in the range ``-1.0 < x < 1.0``.
+
+Use ``bind(x)`` to bind an arbitrary real number.
+
 
 Blending, Amplifying, Suppressing
 ---------------------------------
