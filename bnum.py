@@ -42,6 +42,7 @@ def bind(x: Union[float, int]) -> bnum:
 
 
 def unbounded(x: floatish) -> float:
+    """Return an unbounded number."""
     if isinstance(x, bnum):
         return x.unbounded
     else:
@@ -53,7 +54,12 @@ def blend(
     y: floatish,
     weight: floatish = 0.0,
 ) -> bnum:
-    """Blend two bounded numbers, with optional weighting."""
+    """Combine two bounded numbers with an optional weight.
+
+    With a weight of 0, blend() finds the midpoint between the two
+    numbers. Otherwise, the weight pushes the midpoint up or down
+    accordingly.
+    """
     weighting_factor = 1 - ((1.0 - unbounded(weight)) / 2.0)
     return bind(unbounded(y) * weighting_factor + unbounded(x) * (1 - weighting_factor))
 
@@ -97,19 +103,27 @@ class bnum:
         return str(self.value)
 
     def __repr__(self):
+        """x.__repr__() <==> repr(x)"""
         return f"bnum({self.value})"
 
     def blend(self, y: floatish, weight: floatish):
-        """Blend with another bounded number, with optional weighting."""
+        """Combine with another bounded number, with an optional weight.
+
+        With a weight of 0, blend() finds the midpoint between the two
+        numbers. Otherwise, the weight pushes the midpoint up or down
+        accordingly.
+        """
         return blend(self, y, weight)
 
     def amplify(self, weight: floatish = 0.0):
+        """Scale out away from zero, with an optional weight."""
         if self.value > 0.0:
             return blend(self, 1.0, weight)
         else:
             return blend(self, -1.0, weight)
 
     def suppress(self, weight: floatish = 0.0):
+        """Scale in towards zero, with an optional weight."""
         return blend(self, 0.0, weight)
 
     def __add__(self, y: floatish) -> bnum:
