@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from typing import Optional, Union
 
+VERSION = "0.1"
+
 
 def _bind(unbounded_number: Union[float, int]) -> float:
     """Transform an unbounded number into an bounded number."""

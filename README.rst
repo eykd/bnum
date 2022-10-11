@@ -42,3 +42,21 @@ is:
 Note also that the journey from unbounded to bounded will result in
 rounding errors.  The larger the unbounded number, the larger the
 round-trip deviation.
+
+
+Blending, Amplifying, Suppressing
+---------------------------------
+
+Bounded numbers may be manipulated using the unique ``blend()``
+function, which combines two bounded numbers with an optional
+weight. Without a weight, ``blend(x, y)`` finds the midpoint between
+``x`` and ``y``. A non-zero weight pushes the midpoint up or down
+accordingly.
+
+The ``bnum`` type also has three blending shortcuts:
+
+- ``x.blend(y, weight=0.0)``: equivalent of ``blend(x, y, weight)``.
+
+- ``x.amplify(weight=0.0)``: scale ``x`` away from 0.
+
+- ``x.suppress(weight=0.0)``: scale ``x`` towards 0.
