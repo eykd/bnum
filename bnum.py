@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Optional, Union
 
-VERSION = "0.1"
+VERSION = "0.2"
 
 
 def _bind(unbounded_number: Union[float, int]) -> float:
